@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,45 +41,45 @@ const TextDisplay = ({ extractedText, sourceUrl }: TextDisplayProps) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-sm shadow-xl">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <FileText className="h-6 w-6 text-blue-600" />
+    <Card className="w-full max-w-4xl mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+      <CardHeader className="pb-4 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-2 text-lg md:text-xl font-semibold text-gray-700">
+            <FileText className="h-5 w-5 md:h-6 md:w-6 text-gray-600" />
             Extracted Text
           </CardTitle>
-          <div className="flex gap-2">
+          <div className="flex gap-2 self-end sm:self-center">
             <Button
               onClick={copyToClipboard}
               variant="outline"
               size="sm"
-              className="hover:bg-blue-50"
+              className="text-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-gray-500"
             >
-              <Copy className="h-4 w-4 mr-2" />
+              <Copy className="h-4 w-4 mr-1.5" />
               Copy
             </Button>
             <Button
               onClick={downloadText}
               variant="outline"
               size="sm"
-              className="hover:bg-green-50"
+              className="text-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-gray-500"
             >
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="h-4 w-4 mr-1.5" />
               Download
             </Button>
           </div>
         </div>
-        <p className="text-sm text-gray-600 break-all">
+        <p className="text-xs md:text-sm text-gray-500 break-all mt-2">
           Source: {sourceUrl}
         </p>
       </CardHeader>
-      <CardContent>
-        <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-          <pre className="whitespace-pre-wrap text-sm text-gray-800 font-mono leading-relaxed">
+      <CardContent className="pt-6">
+        <div className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-[50vh] overflow-y-auto">
+          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono leading-relaxed">
             {extractedText}
           </pre>
         </div>
-        <div className="mt-4 text-sm text-gray-500">
+        <div className="mt-4 text-xs md:text-sm text-gray-500">
           Word count: {extractedText.split(/\s+/).filter(word => word.length > 0).length} | 
           Character count: {extractedText.length}
         </div>
