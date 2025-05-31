@@ -30,24 +30,24 @@ const Index = () => {
         
         console.log('Installing Python packages...');
         await pyodideInstance.loadPackage(['micropip']);
-        await pyodideInstance.runPython(`
+        
+        // Install packages using runPythonAsync instead of runPython
+        await pyodideInstance.runPythonAsync(`
           import micropip
           await micropip.install(['beautifulsoup4', 'strip-tags', 'lxml'])
+          print("Packages installed successfully")
         `);
         
-        // Load the crawler script
+        // Load the simplified crawler script
         const crawlerScript = `
 import sys
 import asyncio
 from urllib.parse import urlparse, urljoin
 import random
 import time
-import json
 
 try:
     from pyodide.http import pyfetch
-    from pyodide.ffi import create_proxy, to_js
-    import micropip
     IS_PYODIDE = True
 except ImportError:
     IS_PYODIDE = False
@@ -89,6 +89,8 @@ async def extract_text_from_url(url):
             return f"Failed to fetch content from: {url}"
     except Exception as e:
         return f"Error extracting text from {url}: {str(e)}"
+
+print("Text extraction functions loaded successfully")
 `;
         
         await pyodideInstance.runPython(crawlerScript);
