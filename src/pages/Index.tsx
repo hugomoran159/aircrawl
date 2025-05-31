@@ -426,6 +426,21 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      <footer className="w-full max-w-4xl mx-auto mt-12 pt-8 pb-6 text-center text-gray-500 text-sm border-t border-gray-200">
+        <p> 
+           View the source code on{" "}
+          <a
+            href="https://github.com/hugomoran159/aircrawl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-700 hover:text-gray-900 underline"
+          >
+            GitHub
+          </a>
+          .
+        </p>
+      </footer>
     </div>
   );
 };

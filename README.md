@@ -1,73 +1,51 @@
-# Welcome to your Lovable project
+# 💨 Aircrawl
 
-## Project info
+Aircrawl intelligently crawls all sub-pages of a website, extracting only the useful text content from each page. Simply provide a starting URL, and Aircrawl will navigate the site, gather content, and present you with the cleaned text.
 
-**URL**: https://lovable.dev/projects/4efdc3ff-dc07-4511-a271-3fe4a4c4a1d1
+## Features
 
-## How can I edit this code?
+*   **Website Crawling:** Traverses all pages within the same domain as the starting URL.
+*   **Text Extraction:** Focuses on extracting meaningful content, aiming to exclude boilerplate like navigation menus, footers, and ads.
+*   **Simple Interface:** Easy-to-use input for providing the target URL.
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/4efdc3ff-dc07-4511-a271-3fe4a4c4a1d1) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## Technologies Used
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+*   [Vite](https://vitejs.dev/)
+*   [TypeScript](https://www.typescriptlang.org/)
+*   [React](https://reactjs.org/)
+*   [shadcn/ui](https://ui.shadcn.com/)
+*   [Tailwind CSS](https://tailwindcss.com/)
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/4efdc3ff-dc07-4511-a271-3fe4a4c4a1d1) and click on Share -> Publish.
+To run Aircrawl locally, you'll need [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) (or yarn) installed.
 
-## Can I connect a custom domain to my Lovable project?
+1.  **Clone the repository:**
+    ```bash
+    git clone <YOUR_GIT_REPOSITORY_URL>
+    cd aircrawl # Or your repository's directory name
+    ```
 
-Yes, you can!
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    # or
+    # yarn install
+    ```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+3.  **Run the development server:**
+    ```bash
+    npm run dev
+    # or
+    # yarn dev
+    ```
+    This will start the Vite development server, typically available at `http://localhost:5173` (or another port if 5173 is in use).
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## How It Works
+
+1.  Enter a valid URL of the website you want to crawl in the input field.
+2.  Click "Extract Text".
+3.  Aircrawl will begin fetching and processing the initial page and then discover and crawl sub-pages on the same domain.
+4.  The extracted text from all crawled pages will be (intended to be) aggregated and displayed. (Note: Display/aggregation part might still be under development).
