@@ -209,9 +209,12 @@ print("Website crawler functions loaded successfully")
         description: "Starting to crawl the website. This may take a while depending on the site size.",
       });
       
+      // Define the user agent in JavaScript scope and pass it to Python
+      const userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+      
       // Run the Python crawling function
       const result = await pyodide.runPythonAsync(`
-        result = await crawl_website_sequential_async("${url}", "${DEFAULT_USER_AGENT}")
+        result = await crawl_website_sequential_async("${url}", "${userAgent}")
         result
       `);
       
