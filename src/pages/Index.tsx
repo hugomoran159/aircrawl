@@ -45,7 +45,18 @@ async function fetchPageContentJS(url: string, userAgent: string = DEFAULT_JS_US
   } catch (e) {
     console.error(`Exception during JS fetch for ${url}:`, e);
     const error = e as Error; // Type assertion
-    return { html: null, finalUrl: url, error: error.message || String(e) };
+    let errorMessage = error.message || String(e);
+    
+    // Provide more helpful error messages for common issues
+    if (errorMessage.includes('Failed to fetch')) {
+      if (url.includes('localhost') || url.includes('127.0.0.1')) {
+        errorMessage = 'CORS Error: Cannot fetch from localhost URLs due to browser security restrictions. Try using a public URL instead.';
+      } else {
+        errorMessage = 'Network Error: Failed to fetch the URL. This could be due to CORS restrictions, network issues, or the site blocking requests.';
+      }
+    }
+    
+    return { html: null, finalUrl: url, error: errorMessage };
   }
 }
 
@@ -258,6 +269,7 @@ const Index = () => {
   const [extractedText, setExtractedText] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [scrapeMode, setScrapeMode] = useState<'single' | 'crawl'>('single'); // New state for scrape mode
   const { toast } = useToast();
 
   // NEW: State for crawl progress
@@ -280,13 +292,13 @@ const Index = () => {
     // });
   }, [toast]);
 
-  const handleExtract = async (url: string) => {
+  const handleExtract = async (url: string, mode: 'single' | 'crawl') => {
     setIsLoading(true);
     setExtractedText(''); // Clear previous results
     setSourceUrl('');
     // Reset status
     setCrawlStatus({
-      currentAction: "Starting...",
+      currentAction: mode === 'crawl' ? "Starting Crawl..." : "Fetching Page...",
       processedCount: 0,
       successfulCount: 0,
       failedCount: 0,
@@ -296,8 +308,8 @@ const Index = () => {
 
     try {
       toast({
-        title: "Crawling Started",
-        description: "Attempting to crawl the website. This may take a while.",
+        title: mode === 'crawl' ? "Crawling Started" : "Fetching Page Started",
+        description: mode === 'crawl' ? "Attempting to crawl the website. This may take a while." : "Attempting to fetch and process the single page.",
       });
       
       const userAgent = DEFAULT_JS_USER_AGENT;
@@ -305,32 +317,51 @@ const Index = () => {
       // NEW: onProgress callback definition
       const onProgressCallback = (progress: CrawlProgress) => {
         setCrawlStatus(progress);
-        // Optional: a more detailed toast, but can be noisy.
-        // if (progress.currentAction === "Fetching" || progress.currentAction === "Processing") {
-        //   toast({
-        //     title: `${progress.currentAction} ${progress.url ? progress.url.substring(0, 50)+'...' : ''}`,
-        //     description: `Processed: ${progress.processedCount}, Succeeded: ${progress.successfulCount}, Failed: ${progress.failedCount}, Queue: ${progress.queueSize}`,
-        //     duration: 2000, // Short duration for progress toasts
-        //   });
-        // }
       };
       
-      const result = await crawlWebsiteJS(url, userAgent, 500, 500, 5, onProgressCallback);
+      let result = '';
+      if (mode === 'crawl') {
+        result = await crawlWebsiteJS(url, userAgent, 500, 500, 5, onProgressCallback);
+      } else {
+        // Single page scrape
+        onProgressCallback({ currentAction: "Fetching", url: url, processedCount: 0, successfulCount: 0, failedCount: 0, queueSize: 0 });
+        const { html: htmlContent, finalUrl, error: fetchError } = await fetchPageContentJS(url, userAgent);
+        if (fetchError || !htmlContent) {
+          throw new Error(fetchError || "Failed to fetch page content.");
+        }
+        onProgressCallback({ currentAction: "Processing", url: finalUrl, processedCount: 1, successfulCount: 0, failedCount: 0, queueSize: 0 });
+        const { text: processedBlock, error: processingError } = processHtmlContentJS(htmlContent, finalUrl);
+        if (processingError) {
+          throw new Error(processingError || "Failed to process page content.");
+        }
+        result = processedBlock;
+        onProgressCallback({ currentAction: "Complete", url: finalUrl, processedCount: 1, successfulCount: 1, failedCount: 0, queueSize: 0 });
+      }
       
       setExtractedText(result);
-      setSourceUrl(url);
+      setSourceUrl(url); // Or finalUrl if preferred for single page
       
       toast({
-        title: "Crawl Complete!",
-        description: `Processed: ${crawlStatus.processedCount}, Succeeded: ${crawlStatus.successfulCount}, Failed: ${crawlStatus.failedCount}.`,
+        title: mode === 'crawl' ? "Crawl Complete!" : "Page Scrape Complete!",
+        description: mode === 'crawl' ? `Processed: ${crawlStatus.processedCount}, Succeeded: ${crawlStatus.successfulCount}, Failed: ${crawlStatus.failedCount}.` : "Successfully extracted text from the page.",
       });
     } catch (e) {
       const error = e as Error; // Type assertion
-      console.error('Error crawling website:', error);
+      console.error('Error extracting content:', error);
       setCrawlStatus(prev => ({ ...prev, currentAction: "Error", url: prev.url || url}));
+      
+      let errorMessage = error.message || "Failed to extract content. Please try again or check if the URL is accessible.";
+      
+      // Provide more specific error messages
+      if (error.message.includes('CORS Error')) {
+        errorMessage = "CORS Error: This website doesn't allow cross-origin requests. Try a different URL or use a browser extension to bypass CORS restrictions.";
+      } else if (error.message.includes('Network Error')) {
+        errorMessage = "Network Error: Could not reach the website. Please check the URL and your internet connection.";
+      }
+      
       toast({
-        title: "Crawling Error",
-        description: error.message || "Failed to crawl the website. Please try again or check if the URL is accessible.",
+        title: mode === 'crawl' ? "Crawling Error" : "Scraping Error",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -349,6 +380,8 @@ const Index = () => {
           <URLInput 
             onExtract={handleExtract} 
             isLoading={isLoading}
+            scrapeMode={scrapeMode} // Pass scrapeMode
+            onScrapeModeChange={setScrapeMode} // Pass handler for mode change
           />
 
           {/* NEW: Progress Display Area */}

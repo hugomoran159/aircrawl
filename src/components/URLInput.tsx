@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Globe, Loader2 } from 'lucide-react';
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface URLInputProps {
-  onExtract: (url: string) => void;
+  onExtract: (url: string, mode: 'single' | 'crawl') => void;
   isLoading: boolean;
+  scrapeMode: 'single' | 'crawl';
+  onScrapeModeChange: (mode: 'single' | 'crawl') => void;
 }
 
-const URLInput = ({ onExtract, isLoading }: URLInputProps) => {
+const URLInput = ({ onExtract, isLoading, scrapeMode, onScrapeModeChange }: URLInputProps) => {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,7 +34,7 @@ const URLInput = ({ onExtract, isLoading }: URLInputProps) => {
         // prepending "https://" results in a valid URL.
         finalUrlToExtract = 'https://' + trimmedUrl;
       }
-      onExtract(finalUrlToExtract);
+      onExtract(finalUrlToExtract, scrapeMode);
     }
   };
 
@@ -65,6 +69,27 @@ const URLInput = ({ onExtract, isLoading }: URLInputProps) => {
             disabled={isLoading}
           />
         </div>
+        <div className="flex justify-center">
+          <RadioGroup
+            value={scrapeMode}
+            onValueChange={onScrapeModeChange}
+            disabled={isLoading}
+            className="flex space-x-6"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="single" id="single" />
+              <Label htmlFor="single" className="text-sm text-gray-600 cursor-pointer">
+                Single Page Only
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="crawl" id="crawl" />
+              <Label htmlFor="crawl" className="text-sm text-gray-600 cursor-pointer">
+                Crawl Entire Site
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
         <Button
           type="submit"
           disabled={!url.trim() || !isValidUrl(url) || isLoading}
@@ -73,10 +98,10 @@ const URLInput = ({ onExtract, isLoading }: URLInputProps) => {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Extracting Text...
+              {scrapeMode === 'crawl' ? 'Crawling...' : 'Extracting...'}
             </>
           ) : (
-            'Extract Text'
+            scrapeMode === 'crawl' ? 'Crawl Site' : 'Extract Page'
           )}
         </Button>
       </form>
