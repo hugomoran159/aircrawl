@@ -1,6 +1,6 @@
 # 💨 Aircrawl
 
-Aircrawl intelligently crawls all sub-pages of a website, extracting only the useful text content from each page. Simply provide a starting URL, and Aircrawl will navigate the site, gather content, and present you with the cleaned text.
+Aircrawl provides tools for efficiently extracting website content, designed to gather rich, structured context for Large Language Models (LLMs). Whether you need to scrape a single page or crawl an entire site, Aircrawl helps you get the clean text data you need for your AI applications.
 
 ## Features
 
@@ -42,6 +42,20 @@ To run Aircrawl locally, you'll need [Node.js](https://nodejs.org/) and [npm](ht
     # yarn dev
     ```
     This will start the Vite development server, typically available at `http://localhost:5173` (or another port if 5173 is in use).
+
+## Deployment
+
+To deploy the application to Cloudflare Pages:
+
+1.  **Build the project:**
+    ```bash
+    npm run build
+    ```
+
+2.  **Deploy to Cloudflare Pages:**
+    ```bash
+    wrangler pages deploy dist
+    ```
 
 ## How It Works
 

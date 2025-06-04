@@ -11,7 +11,7 @@ const Header = () => {
         <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-yellow-400 opacity-0" />
       </div>
       <p className="text-base md:text-lg text-gray-500 max-w-xl mx-auto">
-        Aircrawl crawls all sub-pages of a website to extract clean, useful text from the entire site.
+        Aircrawl provides powerful tools to extract clean, comprehensive text from websites, perfect for feeding rich context to Large Language Models.
       </p>
     </div>
   );
